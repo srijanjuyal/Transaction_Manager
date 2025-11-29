@@ -37,7 +37,7 @@
         <p>Please provide any specific details or notes related to the payment transfer</p>
 
         <!-- Transfer Form -->
-        <form>
+        <form action="transfer" method="post">
             <div class="form-section">
                 <h2>Transfer details</h2>
                 <p>Enter the details of the recipient</p>
@@ -46,10 +46,13 @@
                 <!-- Select Source Bank -->
                 <div class="form-group">
                     <label for="source-bank">Select Source Bank</label>
-                    <select id="source-bank" name="senderaccountnum">
+                    <select id="source-bank" required>
                         <option value="" disabled selected>Select Account</option>
                     </select>
                 </div>
+
+                <input type="hidden" id="senderbank" name="senderbank">
+                <input type="hidden" id="senderaccountnumber" name="senderaccountnumber">
 
                 <hr>
                 <!-- Transfer Note -->
@@ -68,14 +71,20 @@
                 <hr>
                 <div class="form-group">
                     <label for="recipient-email">Recipient's Email Address</label>
-                    <input type="email" id="recipient-email" name="recipientemailaddress" placeholder="john@gmail.com" required>
+                    <input type="email" id="recipient-email" name="recipientemailaddress" placeholder="______@gmail.com" required>
+                </div>
+                
+                <hr>
+                <div class="form-group">
+                    <label for="recipient-name">Recipient's Name</label>
+                    <input type="text" id="recipient-name" name="recipientname" required>
                 </div>
 
                 <hr>
                 <div class="form-group">
                     <label for="recipient-bank">Recipient's Bank</label>
-                    <select id="recipient-bank" name="recipient-bank" required>
-                        <option value="" disabled selected>Select Account</option>
+                    <select id="recipient-bank" name="recipientbank">
+                        <option value=""                              selected>Select Account</option>
                     </select>
                 </div>
 
@@ -118,6 +127,19 @@
             .catch(error => {
                 console.error('Error loading bank accounts:', error);
             });
+
+            ///////////// Helper to edit sender account number and bank name //////////////
+            document.getElementById('source-bank').addEventListener('change', function () {
+                const selectedOption = this.options[this.selectedIndex];
+                const bankDetails = selectedOption.innerText.split(' - ');
+                const bankName = bankDetails[0] || '';
+                const accountNumber = bankDetails[1] || '';
+
+                document.getElementById('senderbank').value = bankName;
+                document.getElementById('senderaccountnumber').value = accountNumber;
+            });
+
+            ///////////// End of helper //////////////
 
             ///////////// To get username and email //////////////
             document.addEventListener('DOMContentLoaded', () => {
