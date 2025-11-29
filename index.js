@@ -53,15 +53,15 @@ var dbaccounts = db.model('accountscollection', accountSchema);
 
 const transactionSchema = new mongoose.Schema({
     senderemail: String,
-    // senderbank: String,
+    senderbank: String,
+    senderaccountnumber: Number,
     note: String,
-    senderaccountnum: Number,
-    status: String,
-    // type: String,
-    timestamp: Date,
     recipientemailaddress: String,
+    recipientname: String,
+    recipientbank: String,
     recipientaccountnumber: Number,
-    amount: Number
+    amount: Number,
+    timestamp: Date
 })
 var dbtransaction = db.model('transactioncollection', transactionSchema);
 ///////////////// End of MongoDB Connection //////////////////
@@ -229,28 +229,37 @@ app.get('/api/banks', async (req, res) => {
 
 app.post('/transfer', async (req, res) => {
     try {
+        /////////// sender details ///////////
         const senderemail = req.session.myVariable.email;
         const senderbank = req.body.senderbank;
+        const senderaccountnumber = req.body.senderaccountnumber;
+        /////////// sender details end ///////////
+
         const note = req.body.note;
-        const status = req.body.status;
-        const type = req.body.type;
-        const timestamp = Date.now();
-        const senderaccountnum = req.body.senderaccountnum;
+        
+        /////////// recipeint details ///////////
         const recipientemailaddress = req.body.recipientemailaddress;
+        const recipientname = req.body.recipientname;
+        const recipientbank = req.body.recipientbank;
         const recipientaccountnumber = req.body.recipientaccountnumber;
+        /////////// recipeint details end ///////////
         const amount = req.body.amount;
-        console.log(senderemail, senderbank, note, status, type, timestamp, senderaccountnum, recipientemailaddress, recipientaccountnumber, amount);
+        // const status = req.body.status;
+        // const type = req.body.type;
+        const timestamp = Date.now();
+        
+        console.log(senderemail, senderbank, senderaccountnumber, note, recipientemailaddress, recipientname, recipientbank, recipientaccountnumber, amount, timestamp);
         const newTransaction = new dbtransaction({
             senderemail: senderemail,
-            // senderbank: senderbank,
+            senderbank: senderbank,
+            senderaccountnumber: senderaccountnumber,
             note: note,
-            status: status,
-            type: type,
-            timestamp: timestamp,
-            senderaccountnum: senderaccountnum,
             recipientemailaddress: recipientemailaddress,
+            recipientname: recipientname,
+            recipientbank: recipientbank,
             recipientaccountnumber: recipientaccountnumber,
-            amount: amount
+            amount: amount,
+            timestamp: timestamp
         });
         console.log(newTransaction);
         await newTransaction.save();
